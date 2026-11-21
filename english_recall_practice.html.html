@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Recall Practice by FUC DU ENGLISH GROUP</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root{--bg:#f4f6fb;--card:rgba(255,255,255,0.95);--ink:#172033;--muted:#647089;--accent:#3659d9;--line:#e4e8f1;--good:#16845b;--warn:#a45c00}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background-color:#121620;
+  background-image:linear-gradient(rgba(15, 20, 32, 0.55), rgba(15, 20, 32, 0.55)), url('cat_bg.png');
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  color:var(--ink);
+  font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;
+}
+main{max-width:850px;margin:32px auto;padding:0 16px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-container{display:flex;align-items:center;gap:15px;}
+.logo-img{height:45px;width:auto;object-fit:contain;}
+h1{font-size:clamp(25px,4vw,34px);margin:0 0 5px;color:#ffffff;text-shadow:0 2px 10px rgba(0,0,0,0.6)}
+.sub{color:#e2e8f0;margin:0 0 22px;text-shadow:0 1px 6px rgba(0,0,0,0.6)}
+.panel{background:var(--card);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:18px;padding:22px;margin:14px 0;box-shadow:0 8px 25px rgba(0,0,0,0.25)}
+.timerline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.timer{font-size:32px;font-weight:750;font-variant-numeric:tabular-nums}.phase{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em}
+.progress{height:8px;background:#e9edf7;border-radius:99px;overflow:hidden;margin-top:10px}.bar{height:100%;width:100%;background:var(--accent);transition:width .2s linear}
+.source{font-size:19px;line-height:1.8;min-height:105px}.placeholder{color:var(--muted);font-style:italic}
+textarea{width:100%;min-height:190px;padding:15px;border:1px solid #cfd6e5;border-radius:12px;font:17px/1.7 inherit;resize:vertical;outline-color:var(--accent)}
+button{border:0;border-radius:11px;padding:11px 16px;font-weight:650;font-size:15px;cursor:pointer;background:var(--accent);color:white}
+button.secondary{background:#edf1ff;color:#2949bb}button.ghost{background:#f1f3f7;color:#344057}button:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.hidden{display:none!important}
+.note{font-size:13px;color:var(--muted)}.pill{background:#eef1f8;padding:5px 10px;border-radius:99px;font-size:13px;color:#46516a}
+.score{font-size:42px;font-weight:800}.score small{font-size:16px;color:var(--muted);font-weight:500}
+.idea{padding:12px 14px;border:1px solid var(--line);border-radius:11px;margin:9px 0}.idea strong{display:block}.tag{font-size:13px;color:var(--muted)}
+.good{color:var(--good)}.missing{color:var(--warn)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.panel{padding:17px}.source{font-size:17px}}
+</style>
+</head>
+<body>
+<main>
+ <div class="top">
+   <div class="brand-container">
+     <img src="logo_cat.jpg" alt="Logo" class="logo-img">
+     <div>
+       <h1>Fuc Du English Group</h1>
+       <p class="sub">Quan sát 30 giây · Viết lại trong 120 giây · Chấm điểm tham khảo</p>
+     </div>
+   </div>
+   <span class="pill">3 câu / lượt</span>
+ </div>
+
+ <div class="panel" style="padding: 12px 22px; display: flex; align-items: center; justify-content: space-between;">
+   <span style="font-weight: 600; font-size: 14px;">🎵 Nhạc nền thư giãn:</span>
+   <audio controls loop style="height: 35px; max-width: 60%;">
+     <source src="River Flows In You.mp3" type="audio/mpeg">
+     Trình duyệt không hỗ trợ thẻ audio.
+   </audio>
+ </div>
+
+ <section class="panel">
+  <div class="timerline"><div><div class="phase" id="phase">Sẵn sàng</div><div class="timer" id="timer">00:30</div></div><span class="pill" id="round">Lượt chưa bắt đầu</span></div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="actions"><button id="start">Bắt đầu lượt mới</button><button class="secondary" id="next" disabled>Đoạn khác</button></div>
+  <p class="note">Mỗi lượt chọn ngẫu nhiên một đoạn. Trong 30 giây, hãy ghi nhớ đủ 3 ý chính và cách diễn đạt; hết giờ đoạn gốc sẽ tự ẩn.</p>
+ </section>
+ <section class="panel">
+  <div class="timerline"><h2 style="margin:0;font-size:19px">Đoạn văn cần ghi nhớ</h2><span class="pill" id="visibility">Chưa hiển thị</span></div>
+  <p class="source placeholder" id="source">Nhấn “Bắt đầu lượt mới” để xem đoạn văn.</p>
+  <div class="actions"><button class="ghost hidden" id="reveal">Xem lại bản gốc</button></div>
+ </section>
+ <section class="panel">
+  <div class="timerline"><h2 style="margin:0;font-size:19px">Bài viết của bạn</h2><span class="pill">Tối đa 120 giây</span></div>
+  <textarea id="answer" placeholder="Đoạn văn sẽ xuất hiện ở đây sau khi thời gian quan sát kết thúc..." disabled></textarea>
+  <div class="actions"><button id="submit" disabled>Nộp bài và chấm điểm</button><button class="secondary" id="clear" disabled>Xóa phần viết</button></div>
+  <p class="note">Bạn có thể nộp sớm. Khi hết 120 giây, hệ thống tự khóa bài và chấm điểm.</p>
+ </section>
+ <section class="panel hidden" id="results">
+  <div class="timerline"><h2 style="margin:0;font-size:19px">Kết quả lượt này</h2><span class="pill">Chấm tự động</span></div>
+  <div class="grid">
+    <div><div class="score" id="total">—<small>/10</small></div><div class="tag">Điểm tổng tham khảo</div></div>
+    <div><div class="score" id="contentScore">—<small>/6</small></div><div class="tag">Content · Độ phủ ý chính</div></div>
+  </div>
+  <div style="margin-top:14px"><strong id="languageScore">Language · —/4</strong><p class="note" id="languageNote"></p></div>
+  
+  <!-- Khung chi tiết lỗi ngữ pháp tổng hợp -->
+  <div style="margin-top: 14px;">
+    <h3 style="margin-bottom: 6px; font-size: 15px; color: var(--accent);">📊 Phân tích toàn diện Ngữ pháp & Cấu trúc</h3>
+    <div id="grammarFeedback" style="background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: 14px; line-height: 1.6;"></div>
+  </div>
+
+  <h3>Đối chiếu 3 ý chính</h3><div id="ideas"></div>
+  <h3>Gợi ý cải thiện</h3><ul id="suggestions"></ul>
+  <p class="note">Lưu ý: Hệ thống chấm điểm tự động dựa trên từ khóa, số câu, tính đa dạng từ vựng và các quy tắc ngữ pháp tiếng Anh cơ bản.</p>
+ </section>
+</main>
+<script>
+const passages = [
+ {text:"My family and I live in a small house near the city park. Every morning, we wake up early and have breakfast together in the kitchen. In the evening, we like to sit on the sofa and talk about our day.",ideas:[
+  {name:"Family lives in a small house near the city park",keys:["family","small house","city park","house"]},
+  {name:"Wake up early and have breakfast together in the kitchen",keys:["wake up","early","breakfast","kitchen"]},
+  {name:"Sit on the sofa and talk about the day in the evening",keys:["evening","sofa","talk about","our day"]}
+ ]},
+ {text:"Last Saturday, I went to the beach with my best friends. The weather was sunny and warm, so we swam in the sea for hours. Before going home, we ate fresh seafood at a small restaurant near the coast.",ideas:[
+  {name:"Went to the beach with best friends last Saturday",keys:["last saturday","beach","best friends","friends"]},
+  {name:"Sunny and warm weather; swam in the sea for hours",keys:["sunny","warm","swam","sea"]},
+  {name:"Ate fresh seafood at a small restaurant near the coast",keys:["fresh seafood","seafood","restaurant","coast"]}
+ ]},
+ {text:"Learning English takes time and regular practice every day. You can improve your listening skills by watching movies with English subtitles. Reading simple books and articles is also a great way to learn new words.",ideas:[
+  {name:"Learning English requires time and daily practice",keys:["learning english","time","regular practice","every day"]},
+  {name:"Improve listening skills by watching movies with subtitles",keys:["listening skills","watching movies","subtitles","movies"]},
+  {name:"Reading simple books and articles helps learn new words",keys:["reading","simple books","articles","new words"]}
+ ]},
+ {text:"My older sister works as a nurse at a large hospital downtown. She often has to work night shifts, which makes her very tired. However, she loves her job because she enjoys helping sick people get better.",ideas:[
+  {name:"Older sister works as a nurse at a large downtown hospital",keys:["older sister","nurse","large hospital","downtown"]},
+  {name:"She often works night shifts and gets very tired",keys:["night shifts","very tired","tired"]},
+  {name:"She loves her job because she helps sick people recover",keys:["loves her job","helping","sick people","get better"]}
+ ]},
+ {text:"Public buses are a cheap and convenient way to travel around the city. They help reduce traffic jams during busy morning and evening hours. Therefore, more people should use public transport instead of driving their own cars.",ideas:[
+  {name:"Public buses are cheap and convenient for city travel",keys:["public buses","cheap","convenient","travel around"]},
+  {name:"They help reduce traffic jams during rush hours",keys:["reduce","traffic jams","busy","morning and evening"]},
+  {name:"More people should use public transport instead of private cars",keys:["public transport","instead of","driving","own cars"]}
+ ]},
+ {text:"Eating too much fast food is not good for your body. Burgers and fried potatoes contain a lot of fat, salt, and sugar. It is much healthier to cook fresh meals at home with vegetables and fruit.",ideas:[
+  {name:"Eating too much fast food harms the body",keys:["fast food","not good","your body"]},
+  {name:"Burgers and fries contain much fat, salt, and sugar",keys:["burgers","fried potatoes","fat","salt","sugar"]},
+  {name:"Cooking fresh meals at home with vegetables and fruit is healthier",keys:["healthier","cook","fresh meals","vegetables","fruit"]}
+ ]},
+ {text:"Yesterday afternoon, I lost my wallet while I was shopping at the mall. I felt very worried because my ID card and bank cards were inside. Luckily, a kind security guard found it and returned it to me an hour later.",ideas:[
+  {name:"Lost wallet while shopping at the mall yesterday",keys:["yesterday","lost","wallet","shopping","mall"]},
+  {name:"Felt worried because ID and bank cards were inside",keys:["worried","id card","bank cards","inside"]},
+  {name:"A security guard found and returned it an hour later",keys:["security guard","found","returned","hour later"]}
+ ]},
+ {text:"Summer is my favorite season of the year because the days are long and bright. During the summer holidays, my family usually travels to the countryside to visit my grandparents. We love breathing the fresh air and walking through the green fields.",ideas:[
+  {name:"Summer is the favorite season due to long, bright days",keys:["summer","favorite season","long","bright"]},
+  {name:"Family visits grandparents in the countryside during holidays",keys:["summer holidays","countryside","visit","grandparents"]},
+  {name:"Enjoy breathing fresh air and walking in green fields",keys:["fresh air","walking","green fields","fields"]}
+ ]},
+ {text:"Online shopping has become very popular over the past few years. You can buy almost anything from your phone without leaving your house. However, sometimes the clothes you order do not fit well when they arrive.",ideas:[
+  {name:"Online shopping has become very popular recently",keys:["online shopping","popular","past few years"]},
+  {name:"Buy almost anything by phone without leaving home",keys:["buy","phone","without leaving","house"]},
+  {name:"Ordered clothes sometimes do not fit well upon arrival",keys:["clothes","order","do not fit","arrive"]}
+ ]},
+ {text:"Doing exercise regularly helps keep both your body and mind healthy. You do not need to go to an expensive gym to stay fit. Even a thirty-minute walk in the park every day can make a big difference.",ideas:[
+  {name:"Regular exercise keeps body and mind healthy",keys:["exercise","regularly","body and mind","healthy"]},
+  {name:"No need for an expensive gym to stay fit",keys:["expensive gym","gym","stay fit"]},
+  {name:"A daily thirty-minute park walk makes a big difference",keys:["thirty-minute","walk","park","big difference"]}
+ ]},
+ {text:"My younger brother loves playing video games in his free time. He often plays online with his school friends after finishing his homework. My parents remind him not to stare at the computer screen for too long.",ideas:[
+  {name:"Younger brother loves playing video games in free time",keys:["younger brother","video games","free time"]},
+  {name:"He plays online with school friends after homework",keys:["online","school friends","homework"]},
+  {name:"Parents remind him not to look at the screen too long",keys:["parents","remind","computer screen","too long"]}
+ ]},
+ {text:"Coffee shops are great places for students to study and meet friends. Many people enjoy the quiet atmosphere and the smell of fresh coffee. They often sit there for hours with their laptops and notebooks.",ideas:[
+  {name:"Coffee shops are great for studying and meeting friends",keys:["coffee shops","students","study","meet friends"]},
+  {name:"People enjoy the quiet atmosphere and fresh coffee smell",keys:["quiet atmosphere","smell","fresh coffee"]},
+  {name:"They sit for hours with laptops and notebooks",keys:["for hours","laptops","notebooks"]}
+ ]},
+ {text:"Next month, I am going to take my driving test for the first time. I have been practicing with my instructor every weekend to feel more confident. If I pass, I will save up money to buy a small second-hand car.",ideas:[
+  {name:"Taking the first driving test next month",keys:["next month","driving test","first time"]},
+  {name:"Practicing with an instructor every weekend for confidence",keys:["practicing","instructor","every weekend","confident"]},
+  {name:"If passing, will save money for a second-hand car",keys:["pass","save up money","second-hand car","car"]}
+ ]},
+ {text:"Reading books before going to sleep is a wonderful daily habit. It helps your brain relax after a long and busy day at work or school. Unlike using a smartphone, reading a paper book will not hurt your eyes at night.",ideas:[
+  {name:"Reading before sleep is a great daily habit",keys:["reading books","before going to sleep","daily habit"]},
+  {name:"It helps the brain relax after a busy day",keys:["brain relax","relax","busy day"]},
+  {name:"Paper books do not hurt eyes at night like smartphones",keys:["smartphone","paper book","hurt your eyes","at night"]}
+ ]},
+ {text:"Last winter, heavy snow covered the streets and trees in our town. Schools were closed for two days because the roads were too icy for buses. Children were very happy and spent the whole afternoon building snowmen outside.",ideas:[
+  {name:"Heavy snow covered streets and trees last winter",keys:["last winter","heavy snow","streets","trees"]},
+  {name:"Schools closed for two days due to icy roads",keys:["schools","closed","two days","icy","buses"]},
+  {name:"Happy children spent the afternoon building snowmen",keys:["children","happy","afternoon","snowmen"]}
+ ]},
+ {text:"Having a pet dog brings a lot of joy and energy to a family. Dogs need to go for a walk outside at least twice a day. Taking care of an animal also teaches children how to be more responsible.",ideas:[
+  {name:"A pet dog brings joy and energy to a family",keys:["pet dog","joy","energy","family"]},
+  {name:"Dogs need walks outside at least twice daily",keys:["walk","outside","twice a day"]},
+  {name:"Caring for an animal teaches children responsibility",keys:["taking care","animal","children","responsible"]}
+ ]},
+ {text:"Smartphones have completely changed the way people communicate with each other. We can send messages, make video calls, and share photos in just a few seconds. However, spending too much time on phones can make people feel lonely in real life.",ideas:[
+  {name:"Smartphones have changed how people communicate",keys:["smartphones","changed","communicate"]},
+  {name:"Send messages, video calls, and photos in seconds",keys:["messages","video calls","share photos","seconds"]},
+  {name:"Too much phone time can cause real-life loneliness",keys:[ "too much time","phones","lonely","real life"]}
+ ]},
+ {text:"My mother is an amazing cook who loves trying new recipes on weekends. Every Sunday, she prepares a big lunch with traditional dishes for the whole family. Everyone always looks forward to sitting around the dining table together.",ideas:[
+  {name:"Mother is a great cook who tries new recipes on weekends",keys:["mother","cook","new recipes","weekends"]},
+  {name:"Every Sunday she prepares a big traditional family lunch",keys:["sunday","big lunch","traditional dishes","whole family"]},
+  {name:"Everyone looks forward to sitting at the dining table together",keys:[ "looks forward","sitting around","dining table","together"]}
+ ]},
+ {text:"Visiting a local museum is an interesting way to learn about history. You can see old paintings, ancient coins, and traditional clothes from the past. Many museums offer free tickets for students on certain days of the week.",ideas:[
+  {name:"Visiting a local museum teaches about history",keys:["local museum","museum","learn about history","history"]},
+  {name:"See old paintings, ancient coins, and traditional clothes",keys:["old paintings","ancient coins","traditional clothes","past"]},
+  {name:"Many museums offer free student tickets on certain days",keys:[ "free tickets","students","certain days"]}
+ ]},
+ {text:"Getting enough sleep every night is very important for students. When you are tired, it is hard to focus on what the teacher is saying in class. Try to go to bed at the same time every night to feel fresh in the morning.",ideas:[
+  {name:"Getting enough sleep nightly is important for students",keys:["enough sleep","every night","important","students"]},
+  {name:"Tiredness makes it hard to focus on the teacher in class",keys:["tired","hard to focus","teacher","in class"]},
+  {name:"Go to bed at the same time nightly to feel fresh",keys:[ "go to bed","same time","feel fresh","morning"]}
+ ]},
+ {text:"Traveling by train is much more relaxing than flying on an airplane. You can look out the window and enjoy the beautiful scenery along the way. Furthermore, train stations are usually located right in the center of the city.",ideas:[
+  {name:"Train travel is more relaxing than flying",keys:["traveling by train","train","relaxing","airplane"]},
+  {name:"Look out the window and enjoy beautiful scenery",keys:["window","beautiful scenery","scenery"]},
+  {name:"Train stations are usually located in the city center",keys:[ "train stations","located","center of the city","city center"]}
+ ]},
+ {text:"Last week, I started taking a beginner guitar class at a local music center. My fingers hurt a little at first, but I am already learning how to play simple chords. My goal is to play my favorite song at my friend's birthday party next year.",ideas:[
+  {name:"Started a beginner guitar class at a music center last week",keys:["last week","beginner","guitar class","music center"]},
+  {name:"Fingers hurt at first, now learning simple chords",keys:["fingers hurt","learning","simple chords","chords"]},
+  {name:"Goal is playing a favorite song at a birthday party next year",keys:[ "goal","favorite song","birthday party","next year"]}
+ ]},
+ {text:"Drinking enough water during the day helps your body work properly. Many people forget to drink water when they are busy working or studying. Carrying a reusable water bottle with you is a simple way to remember.",ideas:[
+  {name:"Drinking enough water helps the body function properly",keys:["drinking enough water","water","body","work properly"]},
+  {name:"People often forget to drink when busy working or studying",keys:[ "forget","drink water","busy","working or studying"]},
+  {name:"Carrying a reusable bottle helps you remember",keys:[ "reusable water bottle","water bottle","remember"]}
+ ]},
+ {text:"Working from home gives employees more freedom with their daily schedules. They do not have to spend hours sitting in heavy traffic every morning. On the other hand, working alone at home can sometimes feel quite boring.",ideas:[
+  {name:"Working from home gives more schedule freedom",keys:["working from home","freedom","daily schedules","schedules"]},
+  {name:"No need to spend hours in heavy morning traffic",keys:["spend hours","heavy traffic","every morning","traffic"]},
+  {name:"Working alone at home can sometimes feel boring",keys:[ "working alone","at home","boring"]}
+ ]},
+ {text:"Autumn is a beautiful time of the year when the leaves change color. The weather becomes cooler, and a gentle wind blows through the streets. It is the perfect season for wearing warm sweaters and drinking hot tea.",ideas:[
+  {name:"Autumn is beautiful when leaves change color",keys:["autumn","beautiful","leaves","change color"]},
+  {name:"Weather gets cooler with a gentle wind in the streets",keys:["cooler","gentle wind","streets"]},
+  {name:"Perfect season for warm sweaters and hot tea",keys:[ "warm sweaters","sweaters","hot tea","tea"]}
+ ]},
+ {text:"Learning how to cook basic meals is an essential life skill for young adults. Cooking at home saves a lot of money compared to eating out at restaurants every day. Plus, you know exactly what ingredients are going into your food.",ideas:[
+  {name:"Cooking basic meals is an essential skill for young adults",keys:[ "cook","basic meals","life skill","young adults"]},
+  {name:"Home cooking saves money compared to eating out",keys:[ "cooking at home","saves","money","eating out","restaurants"]},
+  {name:"You know the exact ingredients in your food",keys:["ingredients","your food"]}
+ ]},
+ {text:"Last Sunday, my friends and I went hiking in a national park near our city. We walked along a forest trail and saw many colorful birds and tall trees. When we reached the top of the hill, the view of the valley was breathtaking.",ideas:[
+  {name:"Went hiking with friends in a nearby national park last Sunday",keys:[ "last sunday","friends","hiking","national park"]},
+  {name:"Walked a forest trail and saw colorful birds and tall trees",keys:[ "forest trail","colorful birds","tall trees"]},
+  {name:"The valley view from the hilltop was breathtaking",keys:[ "top of the hill","view","valley","breathtaking"]}
+ ]},
+ {text:"Watching the news every morning keeps you informed about what is happening in the world. You can read articles online, listen to the radio, or watch television programs. However, it is important to check reliable sources so you do not believe fake news.",ideas:[
+  {name:"Morning news keeps you informed about world events",keys:[ "watching the news","every morning","informed","world"]},
+  {name:"Read online articles, listen to radio, or watch TV",keys:[ "articles online","radio","television"]},
+  {name:"Check reliable sources to avoid believing fake news",keys:[ "reliable sources","believe","fake news"]}
+ ]},
+ {text:"My grandfather loves gardening in his backyard every morning before it gets too hot. He grows tomatoes, carrots, and many colorful flowers in small wooden boxes. He always shares his fresh vegetables with our neighbors across the street.",ideas:[
+  {name:"Grandfather gardens in his backyard every cool morning",keys:[ "grandfather","gardening","backyard","morning"]},
+  {name:"Grows tomatoes, carrots, and flowers in wooden boxes",keys:[ "tomatoes","carrots","flowers","wooden boxes"]},
+  {name:"Shares fresh vegetables with neighbors across the street",keys:[ "shares","fresh vegetables","neighbors"]}
+ ]},
+ {text:"Saving a little money every month is a smart habit for the future. You never know when you might need extra cash for an emergency or a sudden trip. Putting your savings into a separate bank account helps prevent you from spending it.",ideas:[
+  {name:"Saving money monthly is a smart habit for the future",keys:[ "saving","money","every month","future"]},
+  {name:"Extra cash may be needed for emergencies or sudden trips",keys:[ "extra cash","emergency","sudden trip"]},
+  {name:"A separate bank account prevents spending savings",keys:[ "savings","separate bank account","bank account","spending"]}
+ ]},
+ {text:"A messy bedroom can make it difficult to find your things and feel relaxed. Spending just ten minutes each day putting away clothes and books keeps your space tidy. A clean room helps clear your mind and improves your mood.",ideas:[
+  {name:"A messy bedroom makes finding things and relaxing hard",keys:[ "messy bedroom","find your things","relaxed"]},
+  {name:"Ten minutes daily putting away clothes and books keeps it tidy",keys:[ "ten minutes","clothes","books","tidy"]},
+  {name:"A clean room clears the mind and improves mood",keys:[ "clean room","clear your mind","improves your mood","mood"]}
+ ]},
+ {text:"Many young people today enjoy listening to podcasts while walking or riding the bus. There are thousands of free shows about comedy, history, science, and daily life. It is an easy way to learn something new without looking at a screen.",ideas:[
+  {name:"Young people enjoy podcasts while walking or on the bus",keys:[ "young people","listening to podcasts","podcasts","walking","bus"]},
+  {name:"Thousands of free shows cover comedy, history, science, and life",keys:[ "free shows","comedy","history","science"]},
+  {name:"Easy way to learn without looking at a screen",keys:[ "learn something new","without looking","screen"]}
+ ]},
+ {text:"Yesterday, I had a job interview at an international company in the city center. I felt very nervous at first, so I arrived fifteen minutes early to calm down. Thankfully, the manager was friendly, and the conversation went much better than I expected.",ideas:[
+  {name:"Had a job interview at an international company yesterday",keys:[ "yesterday","job interview","international company","city center"]},
+  {name:"Arrived fifteen minutes early to calm nervousness",keys:[ "nervous","fifteen minutes early","calm down"]},
+  {name:"Friendly manager made the conversation go better than expected",keys:[ "manager","friendly","conversation","better than"]}
+ ]},
+ {text:"Riding a bicycle to school or work is great for both your health and the environment. Bicycles do not produce any smoke, so they help keep the city air clean. In addition, you never have to worry about finding a parking space for a car.",ideas:[
+  {name:"Cycling to school or work benefits health and environment",keys:[ "bicycle","school or work","health","environment"]},
+  {name:"Bicycles produce no smoke and keep city air clean",keys:[ "smoke","keep","air clean","clean"]},
+  {name:"No need to worry about finding car parking",keys:[ "worry","parking space","parking","car"]}
+ ]},
+ {text:"Libraries are wonderful places for people who love reading and quiet study spaces. You can borrow books, magazines, and even movies for free with a library card. Many local libraries also organize free reading clubs for children and adults.",ideas:[
+  {name:"Libraries are great for reading and quiet study",keys:[ "libraries","reading","quiet study"]},
+  {name:"Borrow books, magazines, and movies free with a library card",keys:[ "borrow","books","magazines","movies","library card"]},
+  {name:"Local libraries organize free reading clubs for all ages",keys:[ "reading clubs","children and adults"]}
+ ]},
+ {text:"Speaking in front of a large group of people makes many students feel shy. Practicing your presentation in front of a mirror at home can build your confidence. Remember to speak slowly, smile, and look at your audience.",ideas:[
+  {name:"Speaking before a large group makes students feel shy",keys:[ "speaking","large group","students","shy"]},
+  {name:"Practicing in front of a mirror builds confidence",keys:[ "practicing","presentation","mirror","confidence"]},
+  {name:"Speak slowly, smile, and look at the audience",keys:[ "speak slowly","smile","audience"]}
+ ]},
+ {text:"Rainy days are the best excuse to stay indoors and enjoy a quiet afternoon. You can wrap yourself in a warm blanket, make a cup of hot chocolate, and watch a classic movie. The sound of rain hitting the window is very peaceful and relaxing.",ideas:[
+  {name:"Rainy days are great for staying indoors on a quiet afternoon",keys:[ "rainy days","stay indoors","quiet afternoon"]},
+  {name:"Enjoy a warm blanket, hot chocolate, and a classic movie",keys:[ "warm blanket","hot chocolate","classic movie"]},
+  {name:"Rain hitting the window sounds peaceful and relaxing",keys:[ "sound of rain","window","peaceful","relaxing"]}
+ ]},
+ {text:"Volunteering at an animal shelter is a meaningful way to spend your free weekend. Volunteers help feed the dogs and cats, clean their cages, and play with them. Helping homeless animals brings a warm feeling of happiness to your heart.",ideas:[
+  {name:"Volunteering at an animal shelter is a meaningful weekend activity",keys:[ "volunteering","animal shelter","meaningful","weekend"]},
+  {name:"Volunteers feed, clean cages, and play with dogs and cats",keys:[ "feed","dogs and cats","clean","cages","play"]},
+  {name:"Helping homeless animals brings happiness to the heart",keys:[ "homeless animals","happiness","heart"]}
+ ]},
+ {text:"Breakfast is often called the most important meal of the day for a good reason. Eating eggs, bread, or fruit in the morning gives your brain energy to study and work. Skipping breakfast usually leaves you feeling hungry and weak before lunchtime.",ideas:[
+  {name:"Breakfast is called the most important daily meal",keys:[ "breakfast","most important meal","day"]},
+  {name:"Morning eggs, bread, or fruit give brain energy",keys:[ "eggs","bread","fruit","brain energy","energy"]},
+  {name:"Skipping breakfast causes hunger and weakness before lunch",keys:[ "skipping breakfast","hungry","weak","lunchtime"]}
+ ]},
+ {text:"Last month, my cousin moved to a new apartment in a different city for his job. He had to pack all his clothes, books, and kitchen items into large cardboard boxes. Although moving was exhausting, he is excited to explore his new neighborhood.",ideas:[
+  {name:"Cousin moved to a new city apartment for work last month",keys:[ "last month","cousin","moved","new apartment","different city"]},
+  {name:"Packed clothes, books, and kitchen items into cardboard boxes",keys:[ "pack","clothes","books","kitchen items","cardboard boxes"]},
+  {name:"Despite exhaustion, he is excited to explore the neighborhood",keys:[ "exhausting","excited","explore","new neighborhood"]}
+ ]},
+ {text:"Taking photos with a smartphone allows us to keep memories of special moments forever. You do not need an expensive camera to take nice pictures of sunsets or friends. Looking through old photo albums always brings back happy stories from the past.",ideas:[
+  {name:"Smartphone photos preserve special memories forever",keys:[ "taking photos","smartphone","memories","special moments"]},
+  {name:"No expensive camera needed for nice sunset or friend photos",keys:[ "expensive camera","nice pictures","sunsets","friends"]},
+  {name:"Old photo albums bring back happy past stories",keys:[ "old photo albums","photo albums","happy stories","past"]}
+ ]},
+ {text:"Plastic bags and bottles cause serious harm to rivers, oceans, and sea animals. We can protect nature by bringing our own cloth bags when we go to the supermarket. Small changes in our daily habits can help create a cleaner planet.",ideas:[
+  {name:"Plastic bags and bottles harm rivers, oceans, and marine life",keys:[ "plastic bags","bottles","harm","rivers","oceans","sea animals"]},
+  {name:"Bring cloth bags to the supermarket to protect nature",keys:[ "protect nature","cloth bags","supermarket"]},
+  {name:"Small daily habit changes help create a cleaner planet",keys:[ "small changes","daily habits","cleaner planet"]}
+ ]},
+ {text:"Learning to swim is not only fun, but it can also save your life around water. Many parents send their children to swimming lessons during the summer break. Once you feel comfortable in the pool, going to the beach becomes much more enjoyable.",ideas:[
+  {name:"Swimming is fun and a life-saving water skill",keys:[ "learning to swim","swim","fun","save your life","water"]},
+  {name:"Parents send children to swimming lessons in summer break",keys:[ "parents","children","swimming lessons","summer break"]},
+  {name:"Pool comfort makes beach trips much more enjoyable",keys:[ "comfortable","pool","beach","enjoyable"]}
+ ]},
+ {text:"My best friend and I have known each other since we were in primary school. Even though we now study at different universities, we still talk on the phone every week. Good friends are always there to support you during difficult times.",ideas:[
+  {name:"Known best friend since primary school",keys:[ "best friend","known each other","primary school"]},
+  {name:"Study at different universities but talk weekly by phone",keys:[ "different universities","talk on the phone","every week"]},
+  {name:"Good friends always support you in difficult times",keys:[ "good friends","support","difficult times"]}
+ ]},
+ {text:"Fast fashion clothes are very cheap, so many people buy new outfits every month. However, these clothes often wear out quickly and create a huge amount of waste. Buying fewer, better-quality items is a smarter and greener choice.",ideas:[
+  {name:"Cheap fast fashion leads people to buy outfits monthly",keys:[ "fast fashion","cheap","new outfits","every month"]},
+  {name:"These clothes wear out quickly and create huge waste",keys:[ "wear out quickly","waste"]},
+  {name:"Buying fewer, higher-quality items is smarter and greener",keys:[ "fewer","better-quality","smarter","greener"]}
+ ]},
+ {text:"Yesterday evening, the electricity went out in our neighborhood during a heavy thunderstorm. My family lit a few candles and sat together in the living room telling funny stories. Without television or Wi-Fi, we actually had a really wonderful evening talking to each other.",ideas:[
+  {name:"Power went out during a heavy thunderstorm last evening",keys:[ "yesterday evening","electricity went out","thunderstorm"]},
+  {name:"Family lit candles and told funny stories in the living room",keys:[ "candles","living room","funny stories"]},
+  {name:"Had a wonderful evening talking without TV or Wi-Fi",keys:[ "without television","wi-fi","wonderful evening","talking"]}
+ ]},
+ {text:"Living in a big city offers many exciting opportunities for work, study, and entertainment. There are plenty of cinemas, shopping malls, restaurants, and art galleries to visit. On the other hand, city life can be very noisy, crowded, and expensive.",ideas:[
+  {name:"Big cities offer opportunities for work, study, and entertainment",keys:[ "big city","opportunities","work","study","entertainment"]},
+  {name:"Many cinemas, malls, restaurants, and galleries to visit",keys:[ "cinemas","shopping malls","restaurants","art galleries"]},
+  {name:"City life can be noisy, crowded, and expensive",keys:[ "noisy","crowded","expensive"]}
+ ]},
+ {text:"Writing down your daily tasks in a small notebook helps you stay organized. When you finish a task, crossing it off the list gives you a great feeling of success. This simple habit prevents you from forgetting important deadlines at school or work.",ideas:[
+  {name:"Writing daily tasks in a notebook helps stay organized",keys:[ "writing down","daily tasks","notebook","organized"]},
+  {name:"Crossing off finished tasks brings a feeling of success",keys:[ "crossing it off","list","success"]},
+  {name:"Prevents forgetting important school or work deadlines",keys:[ "forgetting","important deadlines","deadlines"]}
+ ]},
+ {text:"My aunt travels to different countries every year because she loves exploring new cultures. She always tries local street food and visits traditional markets wherever she goes. Her house is full of interesting souvenirs and postcards from around the world.",ideas:[
+  {name:"Aunt travels abroad yearly to explore new cultures",keys:[ "aunt","travels","different countries","new cultures"]},
+  {name:"She tries local street food and visits traditional markets",keys:[ "street food","traditional markets"]},
+  {name:"Her house is full of souvenirs and postcards worldwide",keys:[ "souvenirs","postcards","around the world"]}
+ ]},
+ {text:"Listening to calm instrumental music can help you focus better while studying. Unlike songs with lyrics, soft piano or guitar music will not distract your brain. Many students create special study playlists to help them concentrate during exam weeks.",ideas:[
+  {name:"Calm instrumental music helps improve study focus",keys:[ "calm","instrumental music","focus better","studying"]},
+  {name:"Soft piano or guitar music does not distract like lyrics",keys:[ "lyrics","piano","guitar","distract"]},
+  {name:"Students make study playlists to concentrate during exams",keys:[ "study playlists","concentrate","exam weeks"]}
+ ]},
+ {text:"Spring is a lovely season when flowers begin to bloom and trees grow new green leaves. The days become warmer, and birds return to sing in the parks every morning. People feel more energetic and spend more time outdoors after the cold winter.",ideas:[
+  {name:"Spring brings blooming flowers and new green leaves",keys:[ "spring","flowers","bloom","green leaves"]},
+  {name:"Days get warmer and birds sing in parks every morning",keys:[ "warmer","birds","sing","parks"]},
+  {name:"People feel energetic and spend more time outdoors",keys:[ "energetic","outdoors","cold winter"]}
+ ]},
+ {text:"Having a good neighbor makes living in an apartment building much more pleasant. Yesterday, my neighbor helped me carry heavy grocery bags up the stairs when the elevator broke. I baked some chocolate cookies later that day to thank her for her kindness.",ideas:[
+  {name:"A good neighbor makes apartment living more pleasant",keys:[ "good neighbor","neighbor","apartment building","pleasant"]},
+  {name:"Neighbor helped carry heavy groceries up stairs when elevator broke",keys:[ "grocery bags","stairs","elevator broke"]},
+  {name:"Baked chocolate cookies later to thank her",keys:[ "baked","chocolate cookies","thank her","kindness"]}
+ ]},
+ {text:"Using social media for too many hours a day can waste a lot of valuable time. Many people keep scrolling through short videos before bed and end up sleeping too late. Turning off phone notifications while studying helps you finish your work much faster.",ideas:[
+  {name:"Excessive daily social media use wastes valuable time",keys:[ "social media","too many hours","waste","valuable time"]},
+  {name:"Scrolling short videos before bed leads to sleeping late",keys:[ "scrolling","short videos","before bed","sleeping too late"]},
+  {name:"Turning off notifications helps finish studying faster",keys:[ "turning off","notifications","studying","faster"]}
+ ]},
+ {text:"Last summer, I took a short cooking course to learn how to make Italian pasta and pizza. Our chef taught us how to prepare fresh tomato sauce and knead the dough by hand. Now, I often cook these delicious dishes for my friends on Friday nights.",ideas:[
+  {name:"Took a short Italian cooking course last summer",keys:[ "last summer","cooking course","italian","pasta and pizza"]},
+  {name:"Chef taught making fresh tomato sauce and kneading dough",keys:[ "chef","tomato sauce","knead","dough"]},
+  {name:"Now cooks these dishes for friends on Friday nights",keys:[ "cook","friends","friday nights"]}
+ ]},
+ {text:"Public parks are important green spaces in crowded modern cities. Families go there on weekends to have picnics, play badminton, and let their children run around. Trees in the park also help cool the air and make the city look much prettier.",ideas:[
+  {name:"Public parks are vital green spaces in crowded cities",keys:[ "public parks","green spaces","crowded","cities"]},
+  {name:"Families visit on weekends for picnics, badminton, and play",keys:[ "families","weekends","picnics","badminton","children"]},
+  {name:"Park trees cool the air and beautify the city",keys:[ "trees","cool the air","prettier"]}
+ ]},
+ {text:"Forgetting someone's name right after meeting them is a very common problem. One helpful trick is to repeat their name out loud during your first conversation. Paying full attention when people introduce themselves also helps you remember better.",ideas:[
+  {name:"Forgetting names right after meeting is common",keys:[ "forgetting","name","meeting","common problem"]},
+  {name:"Repeat their name aloud during the first conversation",keys:[ "repeat","out loud","first conversation"]},
+  {name:"Paying full attention during introductions improves memory",keys:[ "full attention","introduce","remember better"]}
+ ]},
+ {text:"My father bought a new mountain bike last week so we can ride together on Sundays. We like exploring quiet country roads away from the noise and smoke of city traffic. Riding uphill is hard work, but riding fast down the hill is super exciting.",ideas:[
+  {name:"Father bought a mountain bike to ride together on Sundays",keys:[ "father","mountain bike","last week","sundays"]},
+  {name:"Explore quiet country roads away from city noise and smoke",keys:[ "country roads","noise","smoke","city traffic"]},
+  {name:"Uphill riding is hard, but going downhill is exciting",keys:[ "uphill","hard work","down the hill","exciting"]}
+ ]},
+ {text:"Reading fiction novels allows you to escape into different worlds and experience exciting adventures. Good stories help develop your imagination and teach you how to understand other people's feelings. Even reading just fifteen pages a day adds up to many books in a year.",ideas:[
+  {name:"Fiction novels let you escape into worlds and adventures",keys:[ "fiction novels","different worlds","adventures"]},
+  {name:"Good stories build imagination and empathy for others",keys:[ "imagination","understand","feelings"]},
+  {name:"Reading fifteen pages daily equals many books a year",keys:[ "fifteen pages","a day","many books","in a year"]}
+ ]},
+ {text:"Hotel staff must always be polite, patient, and helpful to guests from all over the world. When travelers arrive after a long flight, a warm smile at the reception desk makes them feel welcome. Good customer service is the main reason why tourists return to the same hotel.",ideas:[
+  {name:"Hotel staff must be polite, patient, and helpful to global guests",keys:[ "hotel staff","polite","patient","helpful","guests"]},
+  {name:"A warm smile at reception welcomes tired travelers",keys:[ "long flight","warm smile","reception desk","welcome"]},
+  {name:"Good customer service brings tourists back to the hotel",keys:[ "customer service","tourists","return","same hotel"]}
+ ]},
+ {text:"Preparing your clothes and school bag the night before saves a lot of time in the morning. You will not have to rush around looking for your keys or missing socks before leaving home. Starting the morning calmly puts you in a better mood for the whole day.",ideas:[
+  {name:"Preparing clothes and bag the night before saves morning time",keys:[ "clothes","school bag","night before","saves","time"]},
+  {name:"Avoid rushing to find keys or socks before leaving",keys:[ "rush","keys","socks","leaving home"]},
+  {name:"A calm morning start improves your mood all day",keys:[ "calmly","better mood","whole day"]}
+ ]},
+ {text:"Watching English cartoons is a fun and easy way for beginners to improve their vocabulary. The characters usually speak clearly and use simple sentences about everyday situations. You can learn many useful phrases while laughing at the funny stories.",ideas:[
+  {name:"English cartoons help beginners build vocabulary easily",keys:[ "english cartoons","cartoons","beginners","vocabulary"]},
+  {name:"Characters speak clearly using simple everyday sentences",keys:[ "speak clearly","simple sentences","everyday situations"]},
+  {name:"Learn useful phrases while enjoying funny stories",keys:[ "useful phrases","laughing","funny stories"]}
+ ]},
+ {text:"Last night, I went to a live concert by my favorite local band at a small theater. The energy in the room was amazing, and everyone sang along to their most famous songs. My throat was a little sore this morning, but it was totally worth it.",ideas:[
+  {name:"Attended a favorite local band's live concert last night",keys:[ "last night","live concert","local band","theater"]},
+  {name:"Amazing room energy with everyone singing along to hits",keys:[ "energy","amazing","sang along","famous songs"]},
+  {name:"Had a sore throat this morning, but it was worth it",keys:[ "throat","sore","this morning","worth it"]}
+ ]},
+ {text:"Drinking too much coffee or energy drinks late in the afternoon can ruin your sleep. Caffeine stays in your body for several hours and keeps your brain wide awake at midnight. Switching to herbal tea or warm milk in the evening helps you fall asleep faster.",ideas:[
+  {name:"Afternoon coffee or energy drinks can ruin sleep",keys:[ "coffee","energy drinks","afternoon","ruin your sleep"]},
+  {name:"Caffeine stays in the body for hours and keeps the brain awake",keys:[ "caffeine","several hours","wide awake","midnight"]},
+  {name:"Evening herbal tea or warm milk helps you sleep faster",keys:[ "herbal tea","warm milk","evening","fall asleep faster"]}
+ ]},
+ {text:"Buying second-hand books is a great way to save money and find rare stories. Used bookstores often have a cozy atmosphere with tall wooden shelves full of old books. Sometimes, you can even find interesting notes written by previous owners inside the pages.",ideas:[
+  {name:"Second-hand books save money and offer rare stories",keys:[ "second-hand books","save money","rare stories"]},
+  {name:"Used bookstores feel cozy with tall wooden shelves",keys:[ "used bookstores","cozy atmosphere","wooden shelves"]},
+  {name:"Sometimes find interesting notes from previous owners inside",keys:[ "interesting notes","previous owners","pages"]}
+ ]},
+ {text:"Teamwork is an essential skill that employers look for when hiring new workers. When team members share ideas and help each other, they can solve problems much faster. Listening respectfully to everyone's opinion creates a positive working environment.",ideas:[
+  {name:"Teamwork is a key skill employers seek in new hires",keys:[ "teamwork","essential skill","employers","new workers"]},
+  {name:"Sharing ideas and helping solves problems faster",keys:[ "share ideas","help each other","solve problems","faster"]},
+  {name:"Listening respectfully creates a positive work environment",keys:[ "listening respectfully","opinion","positive working environment"]}
+ ]},
+ {text:"Yesterday, I tried a new vegetarian restaurant with my coworker during our lunch break. I was surprised by how flavorful and filling the mushroom burger and fresh salad were. Eating more plant-based meals is a healthy choice that I want to try more often.",ideas:[
+  {name:"Tried a vegetarian restaurant with a coworker at lunch yesterday",keys:[ "yesterday","vegetarian restaurant","coworker","lunch break"]},
+  {name:"Surprised by the flavorful, filling mushroom burger and salad",keys:[ "flavorful","filling","mushroom burger","fresh salad"]},
+  {name:"Want to eat healthy plant-based meals more often",keys:[ "plant-based meals","healthy choice","more often"]}
+ ]},
+ {text:"Traveling with only a small backpack makes moving from place to place much easier. You do not have to wait at the airport for heavy suitcases or pay extra baggage fees. Packing only the clothes you really need teaches you to travel light and smart.",ideas:[
+  {name:"Traveling with a small backpack makes moving around easier",keys:[ "small backpack","moving","easier"]},
+  {name:"Avoid waiting for heavy suitcases or paying baggage fees",keys:[ "airport","heavy suitcases","baggage fees"]},
+  {name:"Packing only needed clothes teaches smart, light travel",keys:[ "packing","clothes","travel light","smart"]}
+ ]},
+ {text:"My grandmother still writes letters by hand to her old friends who live far away. She buys pretty stamps and carefully puts each letter into a colorful envelope. Receiving a real handwritten letter in the mailbox feels much more special than getting an email.",ideas:[
+  {name:"Grandmother still handwrites letters to distant old friends",keys:[ "grandmother","writes letters","by hand","old friends"]},
+  {name:"Buys pretty stamps and uses colorful envelopes",keys:[ "pretty stamps","stamps","colorful envelope","envelope"]},
+  {name:"Handwritten letters in the mailbox feel more special than emails",keys:[ "handwritten letter","mailbox","special","email"]}
+ ]},
+ {text:"Gardening on a small apartment balcony is a relaxing hobby for people living in cities. You can easily grow fresh herbs like mint, basil, and green onions in small plastic pots. Watering your plants every morning is a peaceful start to the day.",ideas:[
+  {name:"Balcony gardening is a relaxing hobby for city residents",keys:[ "gardening","apartment balcony","relaxing hobby","cities"]},
+  {name:"Grow fresh herbs like mint, basil, and green onions in pots",keys:[ "fresh herbs","mint","basil","green onions","plastic pots"]},
+  {name:"Watering plants every morning is a peaceful start to the day",keys:[ "watering","plants","every morning","peaceful"]}
+ ]},
+ {text:"Making mistakes is a natural part of learning any new skill, especially a foreign language. Do not feel embarrassed when you pronounce a word wrong or forget a grammar rule. Every mistake helps you learn and brings you one step closer to speaking fluently.",ideas:[
+  {name:"Making mistakes is natural when learning a foreign language",keys:[ "making mistakes","natural","learning","foreign language"]},
+  {name:"Do not feel embarrassed by wrong pronunciation or grammar",keys:[ "embarrassed","pronounce","wrong","grammar rule"]},
+  {name:"Every mistake helps you learn and get closer to fluency",keys:[ "helps you learn","one step closer","speaking fluently"]}
+ ]},
+ {text:"Last weekend, a big food festival took place in the main square of our city. Hundreds of people walked around tasting street food from over twenty different countries. There was also live traditional music and dancing on a large outdoor stage.",ideas:[
+  {name:"A big food festival happened in the city main square last weekend",keys:[ "last weekend","food festival","main square"]},
+  {name:"Hundreds tasted street food from over twenty countries",keys:[ "hundreds","tasting","street food","twenty different countries"]},
+  {name:"Live traditional music and dancing performed on an outdoor stage",keys:[ "traditional music","dancing","outdoor stage"]}
+ ]},
+ {text:"Keeping a daily diary is a wonderful way to record your thoughts, feelings, and memories. Writing for just five minutes every night helps you understand yourself better. Years later, reading your old notebooks will remind you of how much you have grown.",ideas:[
+  {name:"A daily diary records thoughts, feelings, and memories",keys:[ "daily diary","record","thoughts","feelings","memories"]},
+  {name:"Writing five minutes nightly helps self-understanding",keys:[ "five minutes","every night","understand yourself"]},
+  {name:"Old notebooks later remind you how much you have grown",keys:[ "old notebooks","remind","grown"]}
+ ]},
+ {text:"Storms with strong winds and heavy rain can sometimes cause power cuts and fallen trees. Before a big storm arrives, people should close all windows and charge their mobile phones. Staying safely indoors is always the best choice during severe weather.",ideas:[
+  {name:"Strong winds and heavy rain can cause power cuts and fallen trees",keys:[ "storms","strong winds","heavy rain","power cuts","fallen trees"]},
+  {name:"Close windows and charge phones before a big storm hits",keys:[ "close all windows","windows","charge","mobile phones"]},
+  {name:"Staying indoors safely is best during severe weather",keys:[ "staying safely indoors","indoors","severe weather"]}
+ ]},
+ {text:"Visiting a local farmers' market on Sunday morning is a great way to buy fresh food. Farmers sell sweet fruits, crisp vegetables, honey, and homemade bread directly to customers. Supporting local growers also helps keep the community economy strong.",ideas:[
+  {name:"Sunday farmers' markets are great for buying fresh food",keys:[ "farmers' market","sunday morning","fresh food"]},
+  {name:"Farmers sell fruits, vegetables, honey, and homemade bread directly",keys:[ "fruits","vegetables","honey","homemade bread"]},
+  {name:"Supporting local growers strengthens the community economy",keys:[ "local growers","community economy","strong"]}
+ ]},
+ {text:"Playing board games with family or friends is a fun screen-free evening activity. Games like chess, Monopoly, or card games require strategy, luck, and a bit of humor. A little friendly competition always brings lots of laughter to the living room.",ideas:[
+  {name:"Board games are a fun screen-free evening activity",keys:[ "board games","screen-free","evening activity"]},
+  {name:"Chess, Monopoly, and card games use strategy, luck, and humor",keys:[ "chess","monopoly","card games","strategy","luck","humor"]},
+  {name:"Friendly competition brings laughter to the living room",keys:[ "friendly competition","laughter","living room"]}
+ ]},
+ {text:"Learning basic first aid skills can help you assist someone who gets injured in an accident. Knowing how to clean a small cut or treat a minor burn is useful in every home. Many community centers offer short weekend courses where anyone can learn these skills.",ideas:[
+  {name:"Basic first aid skills help assist people injured in accidents",keys:[ "first aid","assist","injured","accident"]},
+  {name:"Cleaning cuts and treating minor burns is useful at home",keys:[ "clean","small cut","minor burn","every home"]},
+  {name:"Community centers offer short weekend first aid courses",keys:[ "community centers","weekend courses","learn"]}
+ ]},
+ {text:"My little sister loves drawing animals and cartoon characters with her colored pencils. Her bedroom walls are covered with her colorful paintings and creative sketches. Our parents bought her a big sketchbook yesterday to encourage her artistic talent.",ideas:[
+  {name:"Little sister loves drawing animals and cartoons with colored pencils",keys:[ "little sister","drawing","animals","cartoon characters","colored pencils"]},
+  {name:"Bedroom walls are covered with her paintings and sketches",keys:[ "bedroom walls","colorful paintings","sketches"]},
+  {name:"Parents bought a big sketchbook yesterday to encourage her",keys:[ "parents bought","sketchbook","yesterday","artistic talent"]}
+ ]},
+ {text:"Walking barefoot on soft grass or warm sand feels wonderful after wearing shoes all day. It helps relax the muscles in your feet and connects you closely with nature. Spending time outdoors without shoes is a simple pleasure during warm summer days.",ideas:[
+  {name:"Walking barefoot on grass or sand feels great after wearing shoes",keys:[ "walking barefoot","barefoot","grass","sand","shoes"]},
+  {name:"It relaxes foot muscles and connects you with nature",keys:[ "relax","muscles","feet","nature"]},
+  {name:"Being outdoors shoeless is a simple warm summer pleasure",keys:[ "outdoors","without shoes","simple pleasure","summer days"]}
+ ]},
+ {text:"Airports can be very busy and confusing, especially during major holiday seasons. Passengers should arrive at least two hours early for domestic flights to avoid missing their plane. Checking your passport and boarding pass twice before leaving home is always a good idea.",ideas:[
+  {name:"Airports get very busy and confusing during holidays",keys:[ "airports","busy","confusing","holiday seasons"]},
+  {name:"Arrive two hours early for domestic flights to avoid missing planes",keys:[ "two hours early","domestic flights","missing their plane"]},
+  {name:"Double-check passport and boarding pass before leaving home",keys:[ "passport","boarding pass","twice","leaving home"]}
+ ]},
+ {text:"Sharing a meal with friends is one of the best ways to strengthen your friendships. People relax, laugh, and talk more openly when they are enjoying good food together. You do not need an expensive restaurant; even homemade noodles at home feel special.",ideas:[
+  {name:"Sharing meals with friends strengthens friendships",keys:[ "sharing a meal","friends","strengthen","friendships"]},
+  {name:"People relax, laugh, and talk openly over good food",keys:[ "relax","laugh","talk","good food"]},
+  {name:"No expensive restaurant needed; homemade noodles feel special",keys:[ "expensive restaurant","homemade noodles","special"]}
+ ]},
+ {text:"Recycling paper, glass, and metal at home helps reduce the amount of rubbish in landfills. Setting up two separate bins in the kitchen makes sorting waste quick and easy. Teaching children to recycle early helps them develop good habits for life.",ideas:[
+  {name:"Recycling paper, glass, and metal reduces landfill rubbish",keys:[ "recycling","paper","glass","metal","landfills"]},
+  {name:"Two separate kitchen bins make waste sorting easy",keys:[ "two separate bins","kitchen","sorting waste"]},
+  {name:"Teaching kids to recycle early builds lifelong good habits",keys:[ "teaching children","early","good habits","for life"]}
+ ]},
+ {text:"Last Friday, I accidentally left my umbrella on the bus on my way home from work. Fortunately, the rain stopped before I got off, so I did not get wet. I went to the bus station the next morning and found it in the lost-and-found office.",ideas:[
+  {name:"Left umbrella on the bus coming home from work last Friday",keys:[ "last friday","left","umbrella","bus"]},
+  {name:"Rain stopped before getting off, so did not get wet",keys:[ "rain stopped","got off","get wet"]},
+  {name:"Found it at the bus station lost-and-found next morning",keys:[ "bus station","next morning","lost-and-found"]}
+ ]},
+ {text:"Stretching your body for ten minutes every morning wakes up your muscles and prevents back pain. People who sit at a desk all day often suffer from stiff necks and tired shoulders. Simple stretching exercises during short breaks can keep your body feeling light and active.",ideas:[
+  {name:"Ten minutes of morning stretching wakes muscles and prevents back pain",keys:[ "stretching","ten minutes","every morning","muscles","back pain"]},
+  {name:"Desk workers often get stiff necks and tired shoulders",keys:[ "sit at a desk","stiff necks","tired shoulders"]},
+  {name:"Short-break stretches keep the body light and active",keys:[ "short breaks","light and active"]}
+ ]},
+ {text:"Learning how to manage your time wisely reduces stress during busy exam periods. Breaking a large study topic into smaller daily goals makes it seem much less scary. Rewarding yourself with a short break after studying keeps your motivation high.",ideas:[
+  {name:"Wise time management reduces stress during exams",keys:[ "manage your time","reduces stress","exam periods"]},
+  {name:"Breaking big topics into small daily goals makes them less scary",keys:[ "smaller daily goals","study topic","less scary"]},
+  {name:"Short break rewards after studying keep motivation high",keys:[ "rewarding","short break","motivation high"]}
+ ]},
+ {text:"Night markets are famous tourist attractions in many Asian cities. Visitors can walk through bright streets filled with delicious food smells, souvenirs, and cheap clothes. Bargaining politely with the friendly sellers is part of the fun shopping experience.",ideas:[
+  {name:"Night markets are famous attractions in many Asian cities",keys:[ "night markets","tourist attractions","asian cities"]},
+  {name:"Walk bright streets full of food smells, souvenirs, and cheap clothes",keys:[ "bright streets","food smells","souvenirs","cheap clothes"]},
+  {name:"Polite bargaining with friendly sellers is part of the fun",keys:[ "bargaining","politely","friendly sellers","shopping experience"]}
+ ]},
+ {text:"Having a clean and organized desk makes studying or working from home much easier. When your pens, notebooks, and charger are in their right places, you waste less time searching. A neat workspace helps you stay calm and focused on important tasks.",ideas:[
+  {name:"A clean, organized desk makes home study or work easier",keys:[ "clean","organized desk","studying or working","easier"]},
+  {name:"Keeping pens, notebooks, and charger in place saves search time",keys:[ "pens","notebooks","charger","less time searching"]},
+  {name:"A neat workspace keeps you calm and focused on tasks",keys:[ "neat workspace","calm","focused","important tasks"]}
+ ]},
+ {text:"Dolphins are intelligent sea animals that are known for their playful and friendly behavior. They live in groups and communicate with each other using clicks and whistles. Many tourists love taking boat trips to watch wild dolphins swimming near the coast.",ideas:[
+  {name:"Dolphins are smart sea animals with playful, friendly behavior",keys:[ "dolphins","intelligent","sea animals","playful","friendly"]},
+  {name:"They live in groups and communicate via clicks and whistles",keys:[ "groups","communicate","clicks","whistles"]},
+  {name:"Tourists take boat trips to watch wild dolphins near the coast",keys:[ "tourists","boat trips","wild dolphins","coast"]}
+ ]},
+ {text:"Giving a sincere compliment to a friend or coworker can brighten their entire day. Telling someone that you like their new haircut or appreciate their hard work costs nothing. Kind words create positive energy and make people feel valued.",ideas:[
+  {name:"A sincere compliment can brighten a friend or coworker's day",keys:[ "sincere compliment","compliment","friend or coworker","brighten"]},
+  {name:"Praising a haircut or hard work costs nothing",keys:[ "haircut","hard work","costs nothing"]},
+  {name:"Kind words create positive energy and make people feel valued",keys:[ "kind words","positive energy","valued"]}
+ ]},
+ {text:"Cold winter mornings make it very hard to get out of a warm, comfortable bed. Setting your alarm clock across the room forces you to stand up to turn it off. Once you wash your face with warm water, you will feel awake and ready for the day.",ideas:[
+  {name:"Cold winter mornings make leaving a warm bed hard",keys:[ "cold winter mornings","hard","warm","comfortable bed"]},
+  {name:"Putting the alarm clock across the room forces you to stand up",keys:[ "alarm clock","across the room","stand up"]},
+  {name:"Washing your face with warm water wakes you up for the day",keys:[ "wash your face","warm water","awake","ready"]}
+ ]},
+ {text:"Visiting historical castles and old temples helps us imagine how people lived centuries ago. Tour guides often share fascinating stories about kings, queens, and ancient battles. Taking a guided tour makes visiting historical sites much more interesting than walking alone.",ideas:[
+  {name:"Castles and old temples help imagine life centuries ago",keys:[ "historical castles","old temples","imagine","centuries ago"]},
+  {name:"Tour guides tell fascinating stories of royals and ancient battles",keys:[ "tour guides","stories","kings","queens","ancient battles"]},
+  {name:"Guided tours make historical sites more interesting than going alone",keys:[ "guided tour","historical sites","more interesting","walking alone"]}
+ ]},
+ {text:"Eating slowly and chewing your food well is great for your stomach and digestion. When you eat too fast while watching TV, you often eat more than your body actually needs. Enjoying every bite makes your meals taste much better.",ideas:[
+  {name:"Eating slowly and chewing well benefits stomach and digestion",keys:[ "eating slowly","chewing","stomach","digestion"]},
+  {name:"Eating fast while watching TV leads to overeating",keys:[ "eat too fast","watching tv","eat more","body"]},
+  {name:"Enjoying every bite makes meals taste better",keys:[ "enjoying every bite","meals","taste much better"]}
+ ]},
+ {text:"Last month, our school organized a charity run to raise money for a local children's hospital. Over three hundred students, teachers, and parents joined the five-kilometer race in the park. Everyone felt proud to do something healthy while helping a good cause.",ideas:[
+  {name:"School held a charity run for a children's hospital last month",keys:[ "last month","school","charity run","children's hospital"]},
+  {name:"Over three hundred students, teachers, and parents ran five kilometers",keys:[ "three hundred","students","teachers","parents","five-kilometer"]},
+  {name:"Everyone felt proud doing something healthy for a good cause",keys:[ "proud","healthy","good cause"]}
+ ]},
+ {text:"Sunsets at the beach are among the most peaceful sights in nature. The sky slowly turns into shades of orange, pink, and purple as the sun sinks into the sea. Many people sit quietly on the sand just to watch this daily magic happen.",ideas:[
+  {name:"Beach sunsets are among nature's most peaceful sights",keys:[ "sunsets","beach","peaceful sights","nature"]},
+  {name:"Sky turns orange, pink, and purple as the sun sets into the sea",keys:[ "orange","pink","purple","sun sinks","sea"]},
+  {name:"People sit quietly on the sand to watch this daily magic",keys:[ "sit quietly","sand","daily magic"]}
+ ]},
+ {text:"Learning to play a musical instrument requires patience and daily practice. At first, reading musical notes can seem like learning a brand-new alphabet. However, the joy of playing your first complete song makes all the hard work worthwhile.",ideas:[
+  {name:"Learning an instrument takes patience and daily practice",keys:[ "musical instrument","patience","daily practice"]},
+  {name:"Reading musical notes at first feels like a new alphabet",keys:[ "musical notes","brand-new alphabet","alphabet"]},
+  {name:"Playing your first complete song makes the hard work worthwhile",keys:[ "joy","first complete song","hard work","worthwhile"]}
+ ]},
+ {text:"Keeping indoor plants in your living room adds natural beauty and fresh air to your home. Plants like snake plants or peace lilies are very easy to care for and need little water. Green leaves also help make a small apartment feel much warmer and livelier.",ideas:[
+  {name:"Indoor plants add natural beauty and fresh air to living rooms",keys:[ "indoor plants","living room","natural beauty","fresh air"]},
+  {name:"Snake plants and peace lilies are easy to care for with little water",keys:[ "snake plants","peace lilies","easy to care","little water"]},
+  {name:"Green leaves make small apartments feel warmer and livelier",keys:[ "green leaves","small apartment","warmer","livelier"]}
+ ]},
+ {text:"Polite manners, such as saying \"please\" and \"thank you,\" are important in every culture. Holding the door open for someone behind you is a small act of everyday kindness. Good manners show respect for others and make society a friendlier place.",ideas:[
+  {name:"Polite words like please and thank you matter in every culture",keys:[ "polite manners","please","thank you","every culture"]},
+  {name:"Holding doors open for others is a small everyday kindness",keys:[ "holding the door","kindness"]},
+  {name:"Good manners show respect and create a friendlier society",keys:[ "good manners","respect","friendlier place"]}
+ ]},
+ {text:"Packing a small first-aid kit is essential whenever you go on a camping or hiking trip. Bandages, antiseptic cream, and pain relievers take up very little space in your backpack. Being prepared for small scrapes or insect bites keeps your outdoor adventure safe.",ideas:[
+  {name:"A small first-aid kit is essential for camping or hiking",keys:[ "first-aid kit","essential","camping","hiking"]},
+  {name:"Bandages, cream, and pain relievers take little backpack space",keys:[ "bandages","antiseptic cream","pain relievers","backpack"]},
+  {name:"Preparation for scrapes or insect bites keeps adventures safe",keys:[ "scrapes","insect bites","outdoor adventure","safe"]}
+ ]},
+ {text:"Watching the sunrise from the top of a mountain is an unforgettable experience. You have to wake up very early and hike in the dark with a flashlight. When the first golden rays of light appear over the clouds, all your tiredness disappears.",ideas:[
+  {name:"Mountain-top sunrises are an unforgettable experience",keys:[ "sunrise","top of a mountain","unforgettable experience"]},
+  {name:"Wake up early and hike in the dark with a flashlight",keys:[ "wake up very early","hike in the dark","flashlight"]},
+  {name:"Golden light rays over clouds make all tiredness disappear",keys:[ "golden rays","clouds","tiredness disappears"]}
+ ]},
+ {text:"Helping your parents with household chores teaches you important skills for living on your own later. Washing dishes, sweeping the floor, and doing laundry are things everyone needs to know. Sharing chores also makes life much easier for busy family members.",ideas:[
+  {name:"Helping with chores teaches skills for living independently later",keys:[ "parents","household chores","skills","living on your own"]},
+  {name:"Everyone needs to know dishwashing, sweeping, and laundry",keys:[ "washing dishes","sweeping the floor","doing laundry"]},
+  {name:"Sharing chores makes life easier for busy family members",keys:[ "sharing chores","easier","busy family members"]}
+ ]},
+ {text:"Every new day is a fresh chance to learn something useful and be kind to others. Even small steps forward can lead to big achievements over months and years. Staying curious and positive helps you enjoy the journey of life every single day.",ideas:[
+  {name:"Each new day offers a chance to learn and be kind",keys:[ "new day","fresh chance","learn","kind to others"]},
+  {name:"Small steps forward lead to big achievements over time",keys:[ "small steps","big achievements","months and years"]},
+  {name:"Staying curious and positive helps enjoy life's daily journey",keys:[ "curious","positive","journey of life"]}
+ ]}
+];
+
+let current=null, phase="idle", interval=null, remaining=30, roundNo=0, shown=false, submitted=false;
+const $=id=>document.getElementById(id);
+function fmt(s){return `00:${String(s).padStart(2,"0")}`}
+function setTimer(){ $("timer").textContent=fmt(remaining); $("bar").style.width=(remaining/(phase==="observe"?30:120)*100)+"%"; }
+function stopClock(){if(interval){clearInterval(interval);interval=null}}
+function begin(){
+ stopClock(); current=passages[Math.floor(Math.random()*passages.length)]; roundNo++; phase="observe"; remaining=30; shown=true; submitted=false;
+ $("round").textContent=`Lượt ${roundNo}`;$("phase").textContent="Quan sát và ghi nhớ";$("source").textContent=current.text;$("source").classList.remove("placeholder");$("visibility").textContent="Đang hiển thị";
+ $("answer").value="";$("answer").disabled=true;$("answer").placeholder="Hãy ghi nhớ nội dung. Ô viết sẽ mở sau 30 giây.";
+ $("submit").disabled=true;$("clear").disabled=true;$("reveal").classList.add("hidden");$("results").classList.add("hidden");$("next").disabled=true;
+ setTimer();interval=setInterval(tick,1000);
+}
+function tick(){
+ remaining--;setTimer();
+ if(remaining<=0){stopClock();if(phase==="observe")startWriting();else if(phase==="write")finish(true);}
+}
+function startWriting(){
+ phase="write";remaining=120;shown=false;$("phase").textContent="Viết lại nội dung";$("source").textContent="Đoạn văn đã được ẩn. Hãy viết lại bằng tiếng Anh."; $("source").classList.add("placeholder");$("visibility").textContent="Đã ẩn bản gốc";
+ $("answer").disabled=false;$("answer").placeholder="Viết lại đoạn văn bằng từ ngữ của bạn, giữ đủ 3 ý chính...";$("answer").focus();
+ $("submit").disabled=false;$("clear").disabled=false;$("reveal").classList.remove("hidden");setTimer();interval=setInterval(tick,1000);
+}
+function normalize(s){return s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9\s'-]/g," ").replace(/\s+/g," ").trim()}
+
+function score(){
+ const raw = $("answer").value.trim();
+ const a = normalize(raw);
+ const words = a.split(/\s+/).filter(Boolean);
+ 
+ let covered = 0;
+ const ideaResults = current.ideas.map((idea, i) => {
+  const hits = idea.keys.filter(k => a.includes(normalize(k)));
+  const ok = hits.length > 0;
+  if (ok) covered++;
+  return { idea, ok, hits };
+ });
+ 
+ const content = covered * 2;
+ const sentences = raw.split(/[.!?]+/).map(x => x.trim()).filter(Boolean);
+ const unique = new Set(words).size;
+ const variety = words.length ? unique / words.length : 0;
+
+ // --- HỆ THỐNG KIỂM TRA NGỮ PHÁP TOÀN DIỆN (GRAMMAR ENGINE) ---
+ let grammarPenalty = 0;
+ const grammarLogs = [];
+
+ // 1. Kiểm tra viết hoa đầu câu & cuối đoạn
+ if (raw.length > 0) {
+  if (!/^[A-Z]/.test(raw)) {
+    grammarPenalty += 0.5;
+    grammarLogs.push("• <b>Lỗi viết hoa đầu câu:</b> Bạn quên viết hoa chữ cái đầu tiên của đoạn văn.");
+  }
+  if (!/[.!?]$/.test(raw)) {
+    grammarPenalty += 0.5;
+    grammarLogs.push("• <b>Lỗi dấu câu kết thúc:</b> Đoạn văn thiếu dấu chấm/chấm than/chấm hỏi ở cuối bài.");
+  }
+ }
+
+ // 2. Kiểm tra cấu trúc số lượng câu (Bắt buộc chuẩn 3 câu)
+ if (sentences.length !== 3) {
+  grammarPenalty += 0.5;
+  grammarLogs.push(`• <b>Lỗi cấu trúc câu:</b> Số lượng câu hiện tại là ${sentences.length} (Yêu cầu cấu trúc đúng 3 câu).`);
+ }
+
+ // 3. Kiểm tra các lỗi ngữ pháp tiếng Anh phổ biến (Thì, Mạo từ, Giới từ, Sự hòa hợp chủ - vị)
+ const lowerRaw = raw.toLowerCase();
+ 
+ // Lỗi chia động từ ngôi thứ 3 số ít (ví dụ: he/she/it go -> goes, want -> wants)
+ if (/\b(he|she|it)\s+(want|need|have|like|make|take|go|come|work|play|study)\b/.test(lowerRaw)) {
+  grammarPenalty += 0.5;
+  grammarLogs.push("• <b>Lỗi ngữ pháp (Sự hòa hợp chủ vị):</b> Động từ sau chủ ngữ ngôi thứ 3 số ít (He/She/It) chưa được chia số ít (thêm 's/es').");
+ }
+
+ // Lỗi dùng sai mạo từ cơ bản (a/an)
+ if (/\b(an)\s+[bcdfghjklmnpqrstvwxyz]/i.test(raw)) {
+  grammarPenalty += 0.4;
+  grammarLogs.push("• <b>Lỗi mạo từ:</b> Dùng sai mạo từ 'an' trước danh từ bắt đầu bằng phụ âm.");
+ }
+ if (/\b(a)\s+[aeiou]/i.test(raw)) {
+  grammarPenalty += 0.4;
+  grammarLogs.push("• <b>Lỗi mạo từ:</b> Dùng sai mạo từ 'a' trước danh từ bắt đầu bằng nguyên âm.");
+ }
+
+ // Lỗi double negative (ví dụ: don't know nothing)
+ if (/\b(don't|doesn't|didn't|never)\s+\w+\s+(no|nothing|nobody|nowhere)\b/.test(lowerRaw)) {
+  grammarPenalty += 0.5;
+  grammarLogs.push("• <b>Lỗi cấu trúc phủ định kép (Double Negative):</b> Tránh dùng hai từ mang nghĩa phủ định trong cùng một mệnh đề.");
+ }
+
+ // Lỗi câu quá ngắn/thiếu từ bổ nghĩa
+ sentences.forEach((s, idx) => {
+  const sWords = s.split(/\s+/).filter(Boolean);
+  if (sWords.length < 4 && s.length > 0) {
+    grammarPenalty += 0.3;
+    grammarLogs.push(`• <b>Lỗi cú pháp (Câu ${idx + 1}):</b> Câu quá ngắn (dưới 4 từ), thiếu thành phần mở rộng nghĩa.`);
+  }
+ });
+
+ // --- TÍNH ĐIỂM LANGUAGE TỔNG HỢP ---
+ const sentencePts = Math.min(1.5, Math.max(0, sentences.length / 3 * 1.5));
+ const varietyPts = Math.min(1.5, Math.max(0, (variety - .35) / .4 * 1.5));
+ const baseConventions = (/^[A-Z]/.test(raw) ? 0.5 : 0) + (/[.!?]$/.test(raw) ? 0.5 : 0);
+ 
+ // Điểm Language gộp chung (tối đa 4 điểm, trừ dần theo mức độ lỗi ngữ pháp)
+ let language = (sentencePts + varietyPts + baseConventions) - grammarPenalty;
+ language = Math.max(0, Math.min(4, Math.round(language * 10) / 10));
+
+ const total = Math.round((content + language) * 10) / 10;
+
+ // Hiển thị điểm số lên giao diện
+ $("total").innerHTML = `${total.toFixed(1)}<small>/10</small>`;
+ $("contentScore").innerHTML = `${content}<small>/6</small>`;
+ $("languageScore").textContent = `Language · ${language.toFixed(1)}/4`;
+ $("languageNote").textContent = `Đã trừ điểm dựa trên các lỗi ngữ pháp, chính tả, dấu câu và cấu trúc câu.`;
+
+ // Hiển thị bảng chi tiết lỗi ngữ pháp
+ let grammarHtml = "";
+ if (grammarLogs.length > 0) {
+  grammarHtml += `<div style="color: var(--warn); margin-bottom: 4px;"><strong>⚠️ Các lỗi ngữ pháp & cấu trúc đã phát hiện:</strong><ul style="margin: 4px 0 0 18px; padding: 0;">${grammarLogs.map(l => `<li>${l}</li>`).join("")}</ul></div>`;
+ } else {
+  grammarHtml = `<div style="color: var(--good);"><strong>✓ Tuyệt vời! Không phát hiện lỗi ngữ pháp hoặc cấu trúc lớn nào trong bài viết của bạn.</strong></div>`;
+ }
+ $("grammarFeedback").innerHTML = grammarHtml;
+
+ // Hiển thị đối chiếu ý chính
+ $("ideas").innerHTML = "";
+ ideaResults.forEach((r, i) => {
+  const div = document.createElement("div");
+  div.className = "idea";
+  div.innerHTML = `<strong class="${r.ok ? "good" : "missing"}">${r.ok ? "✓ Đã nhận diện" : "! Chưa nhận diện rõ"} · Ý ${i + 1}</strong><span>${r.idea.name}</span><div class="tag">${r.ok ? "Từ khóa khớp: " + r.hits.join(", ") : "Từ khóa gợi ý: " + r.idea.keys.slice(0, 4).join(", ")}</div>`;
+  $("ideas").appendChild(div);
+ });
+
+ // Gợi ý cải thiện chung
+ const tips = [];
+ if (covered < 3) tips.push(`Bổ sung ${3 - covered} ý chính còn thiếu vào bài.`);
+ if (sentences.length < 3) tips.push("Hãy chia bài viết thành đúng 3 câu riêng biệt.");
+ if (grammarPenalty > 0) tips.push("Hãy rà soát lại các lỗi về chia động từ, mạo từ (a/an) và dấu câu đã được liệt kê ở trên.");
+ if (!tips.length) tips.push("Bài viết hoàn hảo! Cả nội dung lẫn ngữ pháp đều rất xuất sắc.");
+ $("suggestions").innerHTML = tips.map(t => `<li>${t}</li>`).join("");
+
+ $("results").classList.remove("hidden");
+ $("next").disabled = false;
+}
+
+function finish(auto=false){
+ if(submitted)return;submitted=true;stopClock();phase="done";$("phase").textContent="Đã hoàn thành";$("timer").textContent=auto?"00:00":fmt(remaining);
+ $("answer").disabled=true;$("submit").disabled=true;$("clear").disabled=true;$("next").disabled=false;
+ if(!shown){$("source").textContent="Đã hết thời gian viết. Bạn có thể xem bản gốc bên dưới."; $("source").classList.add("placeholder");}
+ score();
+}
+
+$("start").addEventListener("click",begin);
+$("next").addEventListener("click",begin);
+$("submit").addEventListener("click",()=>finish(false));
+$("clear").addEventListener("click",()=>{$("answer").value="";$("answer").focus()});
+$("reveal").addEventListener("click",()=>{if(current){$("source").textContent=current.text;$("source").classList.remove("placeholder");$("visibility").textContent="Đang xem bản gốc";}});
+</script>
+</body>
+</html>
